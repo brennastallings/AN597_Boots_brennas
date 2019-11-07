@@ -1,0 +1,118 @@
+---
+title: "Boots_OriginalCode_brennas"
+author: "brennastallings"
+date: "11/6/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+This is for [Homework 5](https://fuzzyatelin.github.io/bioanth-stats/homework-05.html)
+
+
+First we call any libraries we need
+```{r}
+library(ggplot2)
+library(curl)
+library(lmodel2)
+library(dplyr)
+```
+Then we call in the data set needed
+```{r}
+f <- curl("https://raw.githubusercontent.com/fuzzyatelin/fuzzyatelin.github.io/master/AN597_Fall19/KamilarAndCooperData.csv")
+d <- read.csv(f, header = TRUE, sep = ",", stringsAsFactors = FALSE)
+head(d)
+```
+The we start the fun
+
+>[1] 
+
+#Using the “KamilarAndCooperData.csv” dataset, run a linear regression looking at log(HomeRange_km2) in relation to log(Body_mass_female_mean) and report your β coeffiecients (slope and intercept).
+```{r}
+m<- lm(log(HomeRange_km2)~log(Body_mass_female_mean), data=d)
+m
+```
+β0=-9.441
+β1=1.036
+
+>[2] 
+
+#Then, use bootstrapping to sample from your data 1000 times with replacement, each time fitting the same model and calculating the same coefficients. This generates a sampling distribution for each β coefficient.
+```{r}
+samp_b0<- NULL
+samp_b1<- NULL
+n<- 50
+for (i in 1:1000){
+  d[i]<- sample_n(d, n, replace=T)
+  m[i]<- lm(log(HomeRange_km2)~log(Body_mass_female_mean), data=d[i])
+  samp_b0[i]<-m[i]$coefficients[1]
+  samp_b1[i]<-m[i]$coefficients[2]
+}
+
+```
+This isnt working at the moment, I googled the error and it didnt help. It works if I do each by hand, but cant add to samp
+I made a sample set to test math with
+```{r}
+samp.test<- rbind(samp1, samp2)
+```
+
+
+#Estimate the standard error for each of your β coefficients as the standard deviation of the sampling distribution from your bootstrap 
+```{r}
+sd(samp_b0)
+sd(samp_b1)
+```
+test code
+```{r echo=F}
+#this is for 'b0'
+sd(samp.test[,1])
+#this is for 'b1'
+sd(samp.test[,2])
+```
+
+
+#Determine the 95% CI for each of your β coefficients based on the appropriate quantiles from your sampling distribution.
+```{r}
+ci<-
+```
+test code
+```{r}
+t <- c(mean(samp.test[,1]), sd(samp.test[,1]), (mean(samp.test[,1])/sd(samp.test[,1])))
+t1<- c(mean(samp.test[,2]), sd(samp.test[,2]), (mean(samp.test[,2])/sd(samp.test[,2])))
+t<- rbind(t, t1)
+colnames(t) <- c("Est", "SE","t")
+t<- as.data.frame(t)
+t$lower <- t$Est - qt(0.975, df = 998) * t$SE
+t$upper <- t$Est + qt(0.975, df = 998) * t$SE
+ci <- c(t$lower, t$upper)  # by hand
+ci
+```
+
+
+#How does the former compare to the SE estimated from your entire dataset using the formula for standard error implemented in lm()?
+For the entire dataset:
+```{r echo=F}
+summary(m)
+```
+B0=0.672
+B1=0.084
+#How does the latter compare to the 95% CI estimated from your entire dataset?
+Entire Dataset:
+```{r}
+ci <- confint(m, level = 0.95)  # using the results of lm()
+ci
+```
+#Ill compare when I get working code.....
+
+>5 Challenges
+
+1.Obviously I have serious issues with my For Loop
+</br>
+2.
+</br>
+3.
+</br>
+4.
+</br>
+5.
